@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+void fill_array(int size, int *array);
+void find_pos_num(int size, int *array, int pos_min_max[]);
+void fill_res_arr(int *array, int *result_arr, int pos1, int pos2);
+
+#define SIZE 20
+
+int main() {
+    int *array = malloc(SIZE * sizeof(int));
+    fill_array(SIZE, array);
+
+    int pos_min_max[2] = {0};
+    find_pos_num(SIZE, array,pos_min_max);
+    int size_of_res = pos_min_max[1] - pos_min_max[0] + 1;
+    int *result_arr = malloc(size_of_res * sizeof(int));
+    
+    fill_res_arr(array, result_arr, pos_min_max[0], pos_min_max[1]);
+    free(result_arr);
+    free(array);
+    return 0;
+}
+
+void fill_array(int size, int *array) {
+
+    srand(time(NULL));
+    for (size_t i = 0; i < SIZE; i++) {
+        *(array + i) = rand() % 20 - 10;
+    }
+}
+
+void find_pos_num(int size, int *array, int pos_min_max[]) {
+    int temp_sum = 0;
+    int sum = 0;
+    int temp_first = 0;
+    int firts_pos = 0;
+    int last_pos = 0;
+
+    for (int i = 0; i < SIZE; i++) {
+        if (*(array + i) > 0) {
+            if (temp_sum == 0) {
+                temp_first = i;
+            }
+            temp_sum += *(array + i);
+        } else {
+            if (temp_sum > sum) {
+                sum = temp_sum;
+                firts_pos = temp_first;
+                last_pos = i - 1;
+            }
+            temp_sum = 0;
+        }
+    }
+
+    pos_min_max[0] = firts_pos;
+    pos_min_max[1] = last_pos;    
+}
+
+void fill_res_arr (int *array, int *result_arr, int pos1, int pos2) {
+    for (int i = pos1; i <= pos2; i++ ) {
+        *(result_arr + (i - pos1)) = *(array + i);
+    }
+}
